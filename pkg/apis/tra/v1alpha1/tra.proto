@@ -1,0 +1,37 @@
+syntax = "proto3";
+package traffic_bot.pkg.apis.tra.v1alpha1;
+
+option go_package = "v1alpha1";
+
+service Search {
+    rpc SearchTrain (SearchTrainRequest) returns (SearchTrainResponse) {}
+}
+
+// HelloRequest 请求结构
+message SearchTrainRequest {
+    //    _csrf:d6cecf75-c5c9-4027-8b9e-36e8f1dc89a1
+    string csrf = 1;
+    //    startStation:7380-四腳亭
+    string startStation = 2;
+    //    endStation:1000-臺北
+    string endStation = 3;
+    //    transfer:ONE
+    string transfer = 4;
+    //    rideDate:2020/04/23
+    string rideDate = 5;
+    //    startOrEndTime:true
+    string startOrEndTime = 6;
+    //    startTime:00:00
+    string startTime = 7;
+    //    endTime:23:59
+    string endTime = 8;
+    //     trainTypeList:ALL
+    string trainTypeList = 9;
+    //    query:查詢
+    string query = 10;
+}
+
+// HelloResponse 响应结构
+message SearchTrainResponse {
+    string message = 1;
+}
