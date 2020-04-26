@@ -4,7 +4,8 @@ package traffic_bot.pkg.apis.tra.v1alpha1;
 option go_package = "v1alpha1";
 
 service Search {
-    rpc SearchTrain (SearchTrainRequest) returns (SearchTrainResponse) {}
+    rpc SearchTrain (SearchTrainRequest) returns (SearchTrainResponse) {
+    }
 }
 
 // HelloRequest 请求结构
@@ -33,5 +34,13 @@ message SearchTrainRequest {
 
 // HelloResponse 响应结构
 message SearchTrainResponse {
-    string message = 1;
+    repeated Result message = 1;
+}
+message Result {
+    string url = 1;
+    string number = 2;
+    string startTime = 3;
+    string endTime = 4;
+    string spend = 5;
+    string ticket = 6;
 }

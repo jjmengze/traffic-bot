@@ -24,17 +24,32 @@ func (s *SearchService) SearchTrain(ctx context.Context, r *SearchTrainRequest) 
 	if ctx.Err() == context.Canceled {
 		return nil, status.Errorf(codes.Canceled, "searchService.Search canceled")
 	}
-
+	result := make([]*Result, 0, 0)
 	// Find and visit all links
 	collect.OnHTML(".itinerary-controls", func(e *colly.HTMLElement) {
+
 		e.ForEach(".trip-column", func(i int, element *colly.HTMLElement) {
 			//fmt.Printf("index : %d ,vale %s \n", i, element.Text)
 			//fmt.Println(element.ChildText(".train-number"))
 			data := element.ChildTexts("td")
-			for _, v := range data {
-				fmt.Printf("idx: %s ", v)
+			dataKey := []string{"Url", "StartTime", "EndTime", "Spend", "Ticket"}
+			mapping := make(map[string]string)
+
+			for idx, v := range data {
+				if idx == 6 {
+					mapping[dataKey[4]] = v
+				} else if idx < len(dataKey) {
+					mapping[dataKey[idx]] = v
+				}
 			}
-			fmt.Println()
+			r := &Result{
+				Url:       mapping["Url"],
+				StartTime: mapping["StartTime"],
+				EndTime:   mapping["EndTime"],
+				Spend:     mapping["Spend"],
+				Ticket:    mapping["Ticket"],
+			}
+			result = append(result, r)
 		})
 	})
 
@@ -53,8 +68,8 @@ func (s *SearchService) SearchTrain(ctx context.Context, r *SearchTrainRequest) 
 	collect.OnRequest(func(r *colly.Request) {
 		fmt.Println("Visiting", r.URL)
 	})
-
-	return &SearchTrainResponse{Message: "value"}, collect.Post(SEARCHURL, body)
+	err := collect.Post(SEARCHURL, body)
+	return &SearchTrainResponse{Message: result}, err
 }
 
 func NewSearchService() *SearchService {
