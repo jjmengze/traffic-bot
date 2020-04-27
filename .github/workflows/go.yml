@@ -13,7 +13,8 @@ jobs:
     strategy:
       matrix:
         platform: [ubuntu-latest]
-        go-version: [1.13.x]
+        go-version: [1.13]
+    #    go-version: [1.13.x]
     runs-on: ${{ matrix.platform }}
     container: ${{ matrix.go-version }}
     
