@@ -15,7 +15,7 @@ jobs:
         platform: [ubuntu-latest]
         go-version: [1.13]
     #    go-version: [1.13.x]
-    runs-on: ${{ matrix.platform }}
+    runs-on: golang:${{ matrix.platform }}
     container: ${{ matrix.go-version }}
     
     steps:
