@@ -13,7 +13,7 @@ var (
 	tls        = flag.Bool("tls", false, "Connection uses TLS if true, else plain TCP")
 	caFile     = flag.String("ca_file", "", "The file containing the CA root cert file")
 	serverAddr = flag.String("server_addr", "localhost:10000", "The server address in the format of host:port")
-	timeout    = flag.Int64("timeout", 2, "The client request server timeout time,default 2 second")
+	timeout    = flag.Int64("timeout", 2, "The client request server timeout xtime,default 2 second")
 )
 
 func main() {

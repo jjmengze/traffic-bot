@@ -25,7 +25,7 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// This is a compile-time assertion that a sufficiently up-to-date version
+// This is a compile-xtime assertion that a sufficiently up-to-date version
 // of the legacy proto package is being used.
 const _ = proto.ProtoPackageIsVersion4
 
@@ -445,7 +445,7 @@ func file_pkg_apis_tra_v1alpha1_tra_proto_init() {
 var _ context.Context
 var _ grpc.ClientConnInterface
 
-// This is a compile-time assertion to ensure that this generated file
+// This is a compile-xtime assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion6
 
