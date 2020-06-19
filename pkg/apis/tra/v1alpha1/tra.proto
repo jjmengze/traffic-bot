@@ -4,8 +4,25 @@ package traffic_bot.pkg.apis.tra.v1alpha1;
 option go_package = "v1alpha1";
 
 service Search {
-    rpc SearchTrain (SearchTrainRequest) returns (SearchTrainResponse) {
-    }
+    rpc SearchTrain (SearchTrainRequest) returns (SearchTrainResponse);
+    rpc GetCity (Empty) returns (CityResponse);
+    rpc GetStation (Empty) returns (CityResponse);
+}
+message Empty {
+}
+
+message CityResponse {
+    //基隆
+    string name = 1;
+    //10017
+    string code = 2;
+}
+
+message StationResponse {
+    //基隆
+    string name = 1;
+    //0900
+    string code = 2;
 }
 
 // HelloRequest 请求结构
@@ -44,3 +61,5 @@ message Result {
     string spend = 5;
     string ticket = 6;
 }
+
+
