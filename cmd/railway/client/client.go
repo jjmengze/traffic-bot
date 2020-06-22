@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"fmt"
 	"google.golang.org/grpc"
 	"log"
 	"time"
@@ -26,23 +27,24 @@ func main() {
 	}
 	defer conn.Close()
 	client := tra.NewSearchClient(conn)
-	printFeature(client,
+	printScheduleTime(client,
 		&tra.SearchTrainRequest{
 			Csrf:           "d6cecf75-c5c9-4027-8ab9e-36e8f1dc89a1",
 			StartStation:   "7380-四腳亭",
 			EndStation:     "1000-臺北",
 			Transfer:       "ONE",
-			RideDate:       "2020/04/26",
+			RideDate:       "2020/06/27",
 			StartOrEndTime: "true",
 			StartTime:      "00:00",
 			EndTime:        "23:59",
 			TrainTypeList:  "ALL",
 			Query:          "",
 		})
+	printCityCode(client, &tra.Empty{})
 }
 
 // printFeature gets the feature for the given point.
-func printFeature(client tra.SearchClient, req *tra.SearchTrainRequest) {
+func printScheduleTime(client tra.SearchClient, req *tra.SearchTrainRequest) {
 	//log.Printf("Getting feature for point (%d, %d)", point.Latitude, point.Longitude)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -51,4 +53,16 @@ func printFeature(client tra.SearchClient, req *tra.SearchTrainRequest) {
 		log.Fatalf("%v.GetFeatures(_) = _, %v: ", client, err)
 	}
 	log.Println(response.Message)
+}
+
+func printCityCode(client tra.SearchClient, req *tra.Empty) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	response, err := client.GetCity(ctx, req)
+	if err != nil {
+		log.Fatalf("%v.GetFeatures(_) = _, %v: ", client, err)
+	}
+	for _, value := range response.Results {
+		fmt.Printf("name:%s code:%s \n", value.Name, value.Code)
+	}
 }
