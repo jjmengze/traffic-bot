@@ -12,10 +12,13 @@ message Empty {
 }
 
 message CityResponse {
-    //基隆
-    string name = 1;
-    //10017
-    string code = 2;
+    message CityResult {
+        //基隆
+        string name = 1;
+        //10017
+        string code = 2;
+    }
+    repeated CityResult results = 1;
 }
 
 message StationResponse {
