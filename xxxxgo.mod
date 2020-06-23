@@ -3,7 +3,6 @@ module traffic-bot
 go 1.13
 
 require (
-	github.com/PuerkitoBio/goquery v1.5.1 // indirect
 	github.com/antchfx/htmlquery v1.2.2 // indirect
 	github.com/antchfx/xmlquery v1.2.3 // indirect
 	github.com/antchfx/xpath v1.1.6 // indirect
@@ -11,6 +10,7 @@ require (
 	github.com/golang/groupcache v0.0.0-20200121045136-8c9f03a8e57e // indirect
 	github.com/golang/protobuf v1.4.0
 	github.com/jackdanger/collectlinks v0.0.0-20160421202702-24c4ee2870ba // indirect
+	github.com/jinzhu/gorm v1.9.14
 	github.com/pkg/errors v0.9.1 // indirect
 	golang.org/x/net v0.0.0-20200421231249-e086a090c8fd // indirect
 	google.golang.org/appengine v1.6.6 // indirect

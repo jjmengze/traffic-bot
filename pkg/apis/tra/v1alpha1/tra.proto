@@ -6,7 +6,7 @@ option go_package = "v1alpha1";
 service Search {
     rpc SearchTrain (SearchTrainRequest) returns (SearchTrainResponse);
     rpc GetCity (Empty) returns (CityResponse);
-    rpc GetStation (Empty) returns (CityResponse);
+    rpc GetStation (Empty) returns (StationResponse);
 }
 message Empty {
 }
@@ -22,10 +22,16 @@ message CityResponse {
 }
 
 message StationResponse {
-    //基隆
-    string name = 1;
-    //0900
-    string code = 2;
+    message StationResult {
+        //10017
+        string cityCode = 1;
+        message StationList {
+            string name = 1;
+            string code = 2;
+        }
+        repeated StationList stationList = 2;
+    }
+    repeated StationResult results = 1;
 }
 
 // HelloRequest 请求结构
