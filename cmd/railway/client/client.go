@@ -41,6 +41,20 @@ func main() {
 			Query:          "",
 		})
 	printCityCode(client, &tra.Empty{})
+	printStationCode(client, &tra.Empty{})
+}
+
+func printStationCode(client tra.SearchClient, e *tra.Empty) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	response, err := client.GetStation(ctx, e)
+	if err != nil {
+		log.Fatalf("%v.GetFeatures(_) = _, %v: ", client, err)
+	}
+	for _, value := range response.Results {
+		fmt.Printf("name:%s code:%s \n", value.CityCode, value.StationList)
+		fmt.Printf("\n")
+	}
 }
 
 // printFeature gets the feature for the given point.

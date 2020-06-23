@@ -92,18 +92,47 @@ func (s *SearchService) GetCity(ctx context.Context, r *Empty) (*CityResponse, e
 		}
 	})
 	err = collect.Post("https://www.railway.gov.tw/tra-tip-web/tip/tip001/tip112/gobytime", nil)
-	if err != nil {
-		return nil, status.Errorf(codes.Aborted, "searchService.GetCity occur error:", err)
-	}
+	//if err != nil {
+	//	return nil, status.Errorf(codes.Aborted, "searchService.GetCity occur error:", err)
+	//}
 
 	return &CityResponse{Results: cityData}, err
 }
 
-func (s *SearchService) GetStation(ctx context.Context, r *Empty) (*CityResponse, error) {
+func (s *SearchService) GetStation(ctx context.Context, r *Empty) (*StationResponse, error) {
 	if ctx.Err() == context.Canceled {
 		return nil, status.Errorf(codes.Canceled, "searchService.GetStation canceled")
 	}
-	return nil, nil
+	var err error
+
+	stationData := make([]*StationResponse_StationResult, 0)
+	collect.OnHTML("div.line-inner", func(e *colly.HTMLElement) {
+		if match, _ := regexp.MatchString("city[0-9]+", e.Attr("id")); match {
+
+			itemData := make([]*StationResponse_StationResult_StationList, 0)
+
+			e.ForEach("li button", func(i int, sub *colly.HTMLElement) {
+				item := &StationResponse_StationResult_StationList{
+					Name: sub.Text,
+					Code: sub.Attr("title"),
+				}
+				itemData = append(itemData, item)
+			})
+			stationCity := &StationResponse_StationResult{
+				CityCode:    e.Attr("id"),
+				StationList: itemData,
+			}
+			stationData = append(stationData, stationCity)
+		}
+	})
+
+	err = collect.Post("https://www.railway.gov.tw/tra-tip-web/tip/tip001/tip112/gobytime", nil)
+	if err != nil {
+		//return nil, status.Errorf(codes.Aborted, "searchService.GetCity occur error:", err)
+	}
+	return &StationResponse{
+		Results: stationData,
+	}, err
 
 }
 
