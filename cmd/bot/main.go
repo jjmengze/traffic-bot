@@ -6,7 +6,9 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-	"traffic-bot/pkg/bot"
+	"time"
+	"traffic-bot/pkg/controller"
+	"traffic-bot/pkg/controller/middleware"
 )
 
 func init() {
@@ -16,13 +18,29 @@ func init() {
 var onlyOneSignalHandler = make(chan struct{})
 var shutdownSignals = []os.Signal{os.Interrupt, syscall.SIGTERM}
 var shutdownHandler chan os.Signal
+var shutdownDelayDuration = time.Second * 5
 
 func main() {
 	klog.Info("Start telegram bot..")
-	b := bot.NewBot(os.Getenv("BOTTOKEN"))
-	b.Register()
-	go b.Start()
-	Run(setupSignalHandler())
+	//b := bot.NewBot(os.Getenv("BOTTOKEN"))
+	//b.Register()
+	//go b.Start()
+	//建立stop chan 捕捉關機訊號
+	stop := setupSignalHandler()
+	//startHandler
+	_, err := func(stopCh <-chan struct{}) (*middleware.HandlerContext, error) {
+		handlerCtx, err := middleware.CreateHandlerContext(stopCh)
+		err = controller.StartHandlers(handlerCtx, controller.NewHandlerInitializers())
+		return handlerCtx, err
+	}(stop)
+
+	if err != nil {
+		klog.Fatalf("error starting handler: %v", err)
+	}
+	//c := controller.NewNewControllerWithOptions()
+	//c.Start(stop)
+	//收到關機訊號之後等待shutdownDelayDuration在結束main
+	Run(stop)
 }
 
 func setupSignalHandler() <-chan struct{} {
@@ -43,5 +61,12 @@ func setupSignalHandler() <-chan struct{} {
 }
 
 func Run(stopCh <-chan struct{}) {
-	<-stopCh
+	delayedStopCh := make(chan struct{})
+
+	go func() {
+		defer close(delayedStopCh)
+		<-stopCh
+		time.Sleep(shutdownDelayDuration)
+	}()
+	<-delayedStopCh
 }
