@@ -3,7 +3,6 @@ package controller
 import (
 	"k8s.io/klog/v2"
 	"net/http"
-	"time"
 	"traffic-bot/pkg/controller/handler/tra"
 	"traffic-bot/pkg/controller/middleware"
 )
@@ -78,11 +77,5 @@ func startTRAHandlers(ctx *middleware.HandlerContext, handlerName middleware.Eve
 		ctx,
 		ctx.GetMiddle(handlerName),
 	).Run(ctx.Stop)
-	go func() {
-		for i := 0; i < 100; i++ {
-			ctx.GetMiddle(handlerName).EventCh <- "string"
-			time.Sleep(time.Second)
-		}
-	}()
 	return nil, true, nil
 }
