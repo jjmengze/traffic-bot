@@ -4,34 +4,33 @@ import (
 	tb "gopkg.in/tucnak/telebot.v2"
 	"log"
 	"time"
-	"traffic-bot/pkg/bot/handler"
+	"traffic-bot/pkg/controller/middleware"
 )
-
-var AddToManagerFuncs []func(bot *tb.Bot) error
 
 type Bot struct {
 	*tb.Bot
+	handlerContext *middleware.HandlerContext
 }
 
-func NewBot(token string) *Bot {
+func NewBot(token string, handlerContext *middleware.HandlerContext) *Bot {
 	b, err := tb.NewBot(tb.Settings{
-		// You can also set custom API URL.
-		// If field is empty it equals to "https://api.telegram.org".
 		Token:  token,
 		Poller: &tb.LongPoller{Timeout: 10 * time.Second},
 	})
 	if err != nil {
 		log.Fatal(err)
 	}
-	return &Bot{b}
+
+	return &Bot{
+		b,
+		handlerContext,
+	}
 }
 
 func (b *Bot) Register() {
-	for _, fun := range handler.AddToManagerFuncs {
-		if err := fun(b.Bot); err != nil {
+	for _, fun := range AddToManagerFuncs {
+		if err := fun(b); err != nil {
 			log.Fatal(err)
 		}
 	}
 }
-
-

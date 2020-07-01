@@ -2,11 +2,13 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"k8s.io/klog/v2"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+	"traffic-bot/pkg/bot"
 	"traffic-bot/pkg/controller"
 	"traffic-bot/pkg/controller/middleware"
 )
@@ -22,9 +24,7 @@ var shutdownDelayDuration = time.Second * 5
 
 func main() {
 	klog.Info("Start telegram bot..")
-	//b := bot.NewBot(os.Getenv("BOTTOKEN"))
-	//b.Register()
-	//go b.Start()
+
 	//建立stop chan 捕捉關機訊號
 	stop := setupSignalHandler()
 	//startHandler
@@ -33,6 +33,9 @@ func main() {
 		err = controller.StartHandlers(handlerCtx, controller.NewHandlerInitializers())
 		return handlerCtx, err
 	}(stop)
+	b := bot.NewBot(os.Getenv("BOTTOKEN"), handlerCtx)
+	b.Register()
+	go b.Start()
 
 	if err != nil {
 		klog.Fatalf("error starting handler: %v", err)
@@ -66,6 +69,7 @@ func Run(stopCh <-chan struct{}) {
 	go func() {
 		defer close(delayedStopCh)
 		<-stopCh
+		fmt.Println("hello")
 		time.Sleep(shutdownDelayDuration)
 	}()
 	<-delayedStopCh

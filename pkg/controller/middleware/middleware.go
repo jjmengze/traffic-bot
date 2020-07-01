@@ -2,9 +2,9 @@ package middleware
 
 import (
 	"google.golang.org/grpc"
-	tb "gopkg.in/tucnak/telebot.v2"
 	"k8s.io/klog/v2"
 	tra "traffic-bot/pkg/apis/tra/v1alpha1"
+	"traffic-bot/pkg/controller/handler/tra/actiontype"
 )
 
 type EventType int
@@ -13,14 +13,13 @@ const TRA EventType = iota
 
 type HandlerContext struct {
 	middleMap map[EventType]*Middle
-	bot       *tb.Bot
 	Stop      <-chan struct{}
 }
 
 func (hc *HandlerContext) GetMiddle(name EventType) *Middle {
 	if _, ok := hc.middleMap[name]; !ok {
 		klog.Warning("Not included the key : %s ", name)
-		eventCh := make(chan interface{})
+		eventCh := make(chan actiontype.EventInfo)
 		hc.middleMap[name] = &Middle{EventCh: eventCh}
 		return hc.middleMap[name]
 	}
@@ -56,5 +55,5 @@ func CreateHandlerContext(stop <-chan struct{}) (*HandlerContext, error) {
 }
 
 type Middle struct {
-	EventCh chan interface{}
+	EventCh chan actiontype.EventInfo
 }

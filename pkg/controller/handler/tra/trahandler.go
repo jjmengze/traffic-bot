@@ -3,6 +3,7 @@ package tra
 import (
 	"fmt"
 	"k8s.io/klog/v2"
+	"traffic-bot/pkg/controller/handler/tra/actiontype"
 	"traffic-bot/pkg/controller/middleware"
 )
 
@@ -25,16 +26,26 @@ func (e *TRAHandler) Run(stopCh <-chan struct{}) {
 	defer close(innerCh)
 
 	go func() {
+	out:
 		for {
 			select {
 			case event := <-e.middle.EventCh:
+				e.eventRoute(&event)
 				fmt.Printf("recice %s", event)
 			case <-innerCh:
 				klog.Info("received a Interrupt signal ")
-				break
+				break out
 			}
 		}
 	}()
-
 	<-stopCh
+}
+
+func (e *TRAHandler) eventRoute(event *actiontype.EventInfo) {
+	if event.Action == actiontype.QUERY {
+
+		switch event.Type {
+		case actiontype.City:
+		}
+	}
 }
